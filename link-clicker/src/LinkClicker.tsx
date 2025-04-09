@@ -9,6 +9,8 @@ const AutoClickScheduler = () => {
   const [runLoop, setRunLoop] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [logs, setLogs] = useState<any[]>([]);
+
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     if (runLoop && isScheduled) {
@@ -19,12 +21,27 @@ const AutoClickScheduler = () => {
     return () => clearInterval(intervalId);
   }, [runLoop, isScheduled, intervalTime]);
 
+  useEffect(() => {
+    const logInterval = setInterval(async () => {
+      try {
+        const res = await fetch("https://link-clicker-backend.onrender.com/logs");
+        const data = await res.json();
+        setLogs(data);
+      } catch (err) {
+        console.error("Failed to fetch logs", err);
+      }
+    }, 5000); // refresh every 5 seconds
+  
+    return () => clearInterval(logInterval);
+  }, []);
+  
+
   const handleRunScript = async () => {
     if (!isScheduled && runLoop) return;
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/run", {
+      const response = await fetch("https://link-clicker-backend.onrender.com/run", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,6 +143,21 @@ const AutoClickScheduler = () => {
         >
           {loading ? 'Running...' : 'Submit & Run'}
         </button>
+
+        <div className="mt-6">
+            <h2 className="text-lg font-medium mb-2">Run Log</h2>
+            <ul className="space-y-1 text-sm text-gray-700">
+                {logs.map((log, i) => (
+                <li key={i} className="bg-gray-100 p-2 rounded-md border">
+                    <strong>{log.timestamp}</strong><br />
+                    URL: {log.url}<br />
+                    Status: {log.status}<br />
+                    Clicks: {log.clickCount} | Wait: {log.waitTime}s
+                </li>
+                ))}
+            </ul>
+        </div>
+
       </form>
     </div>
   );
