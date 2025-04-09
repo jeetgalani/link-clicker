@@ -24,7 +24,7 @@ const AutoClickScheduler = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("https://your-render-backend-url.onrender.com/run", {
+      const response = await fetch("http://localhost:5001/run", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,9 +39,11 @@ const AutoClickScheduler = () => {
       });
 
       const data = await response.json();
-      console.log("Response from backend:", data);
+      console.log("✅ Backend response:", data);
+      alert("Script triggered successfully!");
     } catch (error) {
-      console.error("Error running script:", error);
+      console.error("❌ Error:", error);
+      alert("There was an error triggering the script. Check your backend logs.");
     } finally {
       setLoading(false);
     }
