@@ -24,7 +24,7 @@ const AutoClickScheduler = () => {
   useEffect(() => {
     const logInterval = setInterval(async () => {
       try {
-        const res = await fetch("https://link-clicker-backend.onrender.com/logs");
+        const res = await fetch("https://link-clicker-backend-1.onrender.com/logs");
         const data = await res.json();
         setLogs(data);
       } catch (err) {
@@ -41,7 +41,7 @@ const AutoClickScheduler = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("https://link-clicker-backend.onrender.com/run", {
+      const response = await fetch("https://link-clicker-backend-1.onrender.com/run", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
